@@ -3,7 +3,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import './App.css'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
-const bankModuleCode = `account_name = "แก้ไขเป็นชื่อตัวเองนะครับ"
+const bankModuleCode = `account_name = "แก้ไขเป็นชื่อบัญชีตัวเองนะครับ"
 account_password = "1234"
 balance = 1000 + 14
 
@@ -143,7 +143,7 @@ function App() {
           <div className="edit-hint-body">
             <p className="edit-hint-title">แก้ไขใน <code>bank_module.py</code> ด้วยนะครับเพื่อนๆ</p>
             <div className="hint-code">
-              <div className="hint-code-row"><span className="hc-code">account_name = "แก้ไขเป็นชื่อตัวเองนะครับ"</span><span className="hc-comment"># ← เปลี่ยนชื่อ</span></div>
+              <div className="hint-code-row"><span className="hc-code">account_name = "แก้ไขเป็นชื่อบัญชีตัวเองนะครับ"</span><span className="hc-comment"># ← เปลี่ยนชื่อ</span></div>
               <div className="hint-code-row"><span className="hc-code">account_password = "1234"</span><span className="hc-comment"># ← เปลี่ยนรหัสผ่าน</span></div>
               <div className="hint-code-row"><span className="hc-code">balance = 1000 + 14</span><span className="hc-comment"># ← เปลี่ยน 14 เป็นเลขประจำตัวนักศึกษาของตัวเอง</span></div>
             </div>
