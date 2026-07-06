@@ -1,31 +1,11 @@
-import { useState } from 'react'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import './App.css'
 
-// ── Syntax highlighter (no external deps) ──────────────────────────────────
-function highlight(code: string): string {
-  return code
-    // strings (single/double/triple quote)
-    .replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')/g,
-      '<span class="tok-str">$1</span>')
-    // comments
-    .replace(/(#.*)/g, '<span class="tok-cmt">$1</span>')
-    // keywords
-    .replace(/\b(import|from|def|return|if|elif|else|while|for|in|try|except|raise|break|continue|exit|and|or|not|True|False|None|int|input|print)\b/g,
-      '<span class="tok-kw">$1</span>')
-    // built-in functions / types
-    .replace(/\b(ValueError|TypeError|Exception)\b/g,
-      '<span class="tok-cls">$1</span>')
-    // numbers
-    .replace(/\b(\d+)\b/g, '<span class="tok-num">$1</span>')
-    // operators
-    .replace(/([+\-*/%=<>!]+)/g, '<span class="tok-op">$1</span>')
-}
-
-// ── Data ─────────────────────────────────────────────────────────────────────
-const bankModuleCode = `account_name = "แก้ไขเป็นชื่อตัวเอง"
+// ── Data ──────────────────────────────────────────────────────────────────────
+const bankModuleCode = `account_name = "แก้ไขเป็นชื่อตัวเองนะครับ"
 account_password = "1234"
 balance = 1000 + 14
-
 
 def check_password(password):
     if password == account_password:
@@ -84,7 +64,7 @@ while True:
             balance = bank_module.withdraw(balance, amount)
             print("ยอดเงินคงเหลือ:", balance, "บาท")
         except:
-            print("ยอดเงินไม่เพียงพอหรือจำนวนเงินไม่ถูกต้อง")
+            print("ยอดเงินไม่เพียงพอ")
 
     elif choice == 3:
         print("ยอดเงินคงเหลือ:", balance, "บาท")
@@ -96,205 +76,91 @@ while True:
     else:
         print("กรุณาเลือกเมนู 1-4")`
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false)
-
-  const copy = () => {
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
-  }
-
-  return (
-    <button className={`copy-btn ${copied ? 'copied' : ''}`} onClick={copy} aria-label="Copy code">
-      {copied ? (
-        <>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          Copied!
-        </>
-      ) : (
-        <>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-          </svg>
-          Copy
-        </>
-      )}
-    </button>
-  )
-}
-
+// ── CodeBlock ─────────────────────────────────────────────────────────────────
 function CodeBlock({ filename, code, badge }: { filename: string; code: string; badge?: string }) {
-  const lines = code.split('\n')
-
   return (
     <div className="code-card">
       <div className="code-card-header">
         <div className="header-left">
-          <div className="traffic-lights">
-            <span className="dot red" />
-            <span className="dot yellow" />
-            <span className="dot green" />
-          </div>
-          <span className="filename">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: 5, opacity: 0.7 }}>
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-            {filename}
-          </span>
+          <span className="filename">{filename}</span>
           {badge && <span className="badge">{badge}</span>}
         </div>
-        <div className="header-right">
-          <span className="lang-tag">Python</span>
-          <CopyButton text={code} />
-        </div>
       </div>
-      <div className="code-body">
-        <div className="line-numbers" aria-hidden="true">
-          {lines.map((_, i) => (
-            <span key={i}>{i + 1}</span>
-          ))}
-        </div>
-        <pre
-          className="code-content"
-          dangerouslySetInnerHTML={{ __html: highlight(code) }}
-        />
-      </div>
+
+      <SyntaxHighlighter
+        language="python"
+        style={{
+          ...vscDarkPlus,
+          'token string-interpolation': { color: '#e2e8f0' },
+          'string': { color: '#e2e8f0' },
+          'attr-value': { color: '#e2e8f0' },
+        }}
+        showLineNumbers
+        lineNumberStyle={{
+          minWidth: '2.8em',
+          paddingRight: '1em',
+          color: 'rgba(255,255,255,0.85)',
+          userSelect: 'none',
+          fontSize: '12.5px',
+          fontStyle: 'normal',
+          borderRight: '1px solid rgba(255,255,255,0.08)',
+          marginRight: '1em',
+        }}
+        customStyle={{
+          margin: 0,
+          borderRadius: 0,
+          background: '#13161d',
+          fontSize: '13px',
+          lineHeight: '1.75',
+          padding: '18px 20px',
+          overflowX: 'auto',
+        }}
+        codeTagProps={{ style: { fontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace", fontVariantLigatures: 'none' } }}
+      >
+        {code}
+      </SyntaxHighlighter>
     </div>
   )
 }
 
-function EditHint() {
-  return (
-    <div className="edit-hint">
-      <div className="edit-hint-icon">⚠️</div>
-      <div className="edit-hint-content">
-        <p className="edit-hint-title">จุดที่ต้องแก้ไขใน <code>bank_module.py</code></p>
-        <div className="edit-hint-items">
-          <div className="hint-item">
-            <span className="hint-line"><code>account_name = "แก้ไขเป็นชื่อตัวเอง"</code></span>
-            <span className="hint-arrow">← เปลี่ยนชื่อ</span>
-          </div>
-          <div className="hint-item">
-            <span className="hint-line"><code>account_password = "1234"</code></span>
-            <span className="hint-arrow">← เปลี่ยนรหัสผ่าน</span>
-          </div>
-          <div className="hint-item">
-            <span className="hint-line"><code>balance = 1000 + 14</code></span>
-            <span className="hint-arrow">← เปลี่ยน 14 เป็นเลขที่ตัวเอง</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function RunInstructions() {
-  return (
-    <div className="run-section">
-      <div className="run-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polygon points="5 3 19 12 5 21 5 3" />
-        </svg>
-        วิธีรัน
-      </div>
-      <ol className="run-steps">
-        <li>วางไฟล์ทั้งสองไว้ในโฟลเดอร์เดียวกัน</li>
-        <li>
-          รันคำสั่ง:
-          <span className="inline-cmd">
-            <code>python main.py</code>
-            <CopyButton text="python main.py" />
-          </span>
-        </li>
-      </ol>
-    </div>
-  )
-}
-
-// ── Main App ──────────────────────────────────────────────────────────────────
+// ── App ───────────────────────────────────────────────────────────────────────
 function App() {
   return (
     <div className="app">
-      {/* Background grid */}
       <div className="bg-grid" aria-hidden="true" />
 
-      {/* Header */}
-      <header className="site-header">
-        <div className="header-inner">
-          <div className="logo">
-            <span className="logo-icon">🏦</span>
-            <span className="logo-text">Bank<span className="logo-accent">System</span></span>
-          </div>
-          <nav className="header-nav">
-            <span className="nav-chip">Python 3</span>
-            <span className="nav-chip">Source Code</span>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="hero">
-        <div className="hero-inner">
-          <div className="hero-eyebrow">
-            <span className="eyebrow-dot" />
-            Source Code Guide
-          </div>
-          <h1 className="hero-title">
-            Bank System
-            <br />
-            <span className="gradient-text">Source Code</span>
-          </h1>
-          <p className="hero-desc">
-            โปรแกรมระบบธนาคารเขียนด้วย Python — มีฟีเจอร์ฝากเงิน ถอนเงิน และตรวจสอบยอดคงเหลือ
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
       <main className="content">
-        <EditHint />
 
-        <section className="file-section">
-          <div className="section-label">
-            <span className="section-num">01</span>
-            <span className="section-title">bank_module.py</span>
-            <span className="section-desc">— Logic หลักของระบบธนาคาร</span>
+        {/* Warning */}
+        <div className="edit-hint">
+          <div className="edit-hint-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
           </div>
-          <CodeBlock
-            filename="bank_module.py"
-            code={bankModuleCode}
-            badge="แก้ไขก่อนส่ง"
-          />
+          <div className="edit-hint-body">
+            <p className="edit-hint-title">แก้ไขใน <code>bank_module.py</code> ด้วยนะครับเพื่อนๆ</p>
+            <div className="hint-code">
+              <div className="hint-code-row"><span className="hc-code">account_name = "แก้ไขเป็นชื่อตัวเองนะครับ"</span><span className="hc-comment"># ← เปลี่ยนชื่อ</span></div>
+              <div className="hint-code-row"><span className="hc-code">account_password = "1234"</span><span className="hc-comment"># ← เปลี่ยนรหัสผ่าน</span></div>
+              <div className="hint-code-row"><span className="hc-code">balance = 1000 + 14</span><span className="hc-comment"># ← เปลี่ยน 14 เป็นเลขประจำตัวนักศึกษาของตัวเอง</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* File 01 */}
+        <section className="file-section">
+          <CodeBlock filename="bank_module.py" code={bankModuleCode} />
         </section>
 
+        {/* File 02 */}
         <section className="file-section">
-          <div className="section-label">
-            <span className="section-num">02</span>
-            <span className="section-title">main.py</span>
-            <span className="section-desc">— จุดเริ่มต้นของโปรแกรม</span>
-          </div>
-          <CodeBlock
-            filename="main.py"
-            code={mainCode}
-          />
+          <CodeBlock filename="main.py" code={mainCode} />
         </section>
 
-        <RunInstructions />
       </main>
-
-      {/* Footer */}
-      <footer className="site-footer">
-        <span>Bank System — Source Code Guide</span>
-        <span className="footer-sep">·</span>
-        <span>Python 3</span>
-      </footer>
     </div>
   )
 }
